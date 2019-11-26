@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <iostream>
-#include <String>
+#include <string>
+//Allows usage of fopen() in MS Visual Studio:
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#endif
+
 
 /*
 	COMP-3473 Operating Systems Group Project
@@ -58,57 +63,115 @@ int main() {
 
 			if (command == "create")
 				testFileCreation();
-			if (command == "delete")
+			else if (command == "delete")
 				testFileDeletion();
-			if (command == "rename")
+			else if (command == "rename")
 				testFileRenaming();
-			if (command == "copy")
+			else if (command == "copy")
 				testFileCopy();
-			if (command == "move")
+			else if (command == "move")
 				testFileMove();
-			if (command == "edit")
+			else if (command == "edit")
 				testFileEdit();
-			if (command == "help")
+			else if (command == "exit")
+				exit(0);
+			else if (command == "help")
 				openHelpMenu();
-
-			cout << "Unrecognized command. Type help for a list of commands and usages.";
-
+			else 
+				cout << "Unrecognized command. Type 'help' for a list of commands and their usages.";
 
 		}
 
 
 	} while (menuOpen);
 
-	//1. Create a file:
-	
+	return 0;
+}
+
+//Test Run Methods:
+
+//1. Create a file:
+void testFileCreation() {
+
 	FILE* filePointer;
 
-	char* fileName = (char*) malloc (sizeof(char)*255);
+	char* fileName = (char*)malloc(sizeof(char) * 255);
 
-	
+	cout << "Please enter the desire name of the file. It will be created in the same directory as this process." << endl;
+	cout << ">>";
+	cin >> fileName;
 
-	//2. Delete a file:
+	if (fileName != NULL)
+		filePointer = createFile(fileName);
+	else
+		cout << "Failed. Please enter a valid file name." << endl;
 
-	//3. Rename a file:
+}
 
-	if (filePointer != NULL) {
+//2. Delete a file:
+void testFileDeletion() {
 
 
 
-	}
+}
 
-	//4. Copy a file:
+//3. Rename a file:
+void testFileRenaming() {
 
-	//5. Move a file:
 
-	//6. Text file operations:
+}
 
-	return 0;
+//4. Copy a file:
+void testFileCopy() {
+
+
+}
+
+//5. Move a file:
+void testFileMove() {
+
+
+}
+
+//6: Edit a file:
+void testFileEdit() {
+
+	char fileName[255];
+
+	cout << "Please enter the file name of the file you wish to edit." << endl;
+	cout << "Note: if it does not exist in this directory, you must specify the full document path." << endl;
+	cout << ">>";
+	cin >> fileName;
+
+	//if success (fileName is valid):
+	cout << "Please enter the type of edit you wish to make: " << endl;
+	cout << "\t 1. Read" << endl;
+	cout << "\t 2. Append" << endl;
+	cout << "\t 3. Insert" << endl;
+	cout << "\t 4. Remove" << endl;
+
+}
+
+//Help Menu Interface:
+void openHelpMenu() {
+
+	cout << endl;
+	cout << " Commands:" << endl;
+	cout << "\t 1. create" << "\t - Create a new file" << endl;
+	cout << "\t 2. delete" << "\t - Delete a specific file" << endl;
+	cout << "\t 3. rename" << "\t - Rename a specific file" << endl;
+	cout << "\t 4. copy" << "\t - Copy a file from one directory to another" << endl;
+	cout << "\t 5. move" << "\t - Move a file from one directory to another" << endl;
+	cout << "\t 6. edit" << "\t - Edit a text file (Read, Append, Insert, Remove)" << endl;
+	cout << "\t 7. exit" << "\t - Exit this program" << endl;
+	cout << " Usage:\n\t enter a command word verbatim as above (no parameters), then enter the required info when prompted." << endl << endl;
+
+	return;
+
 }
 
 //Utility Methods:
 
-//1. Create a file method:
 FILE* createFile(char* fileName) {
 
 	if (fileName != NULL)
