@@ -43,6 +43,7 @@ void testFileEdit();
 void openHelpMenu();
 
 FILE* createFile(char* fileName);
+void deleteFile(char* fileName);
 
 //Main Function:
 int main() {
@@ -50,16 +51,17 @@ int main() {
 	//Main function to test POFM operations
 
 	//Menu System:
+	string command;
 
-	bool menuOpen = true;
-	string command = "";
+	cout << " Welcome to LakeheadU Portable File Manager! Please enter one of the commands below to begin." << endl << endl;
+	openHelpMenu();
 
 	do {
-
-		cout << ">>";
+		cout << "  >> ";
 		cin >> command;
+		cout << endl;
 
-		if (command != "") {
+		if (!command.empty()) {
 
 			if (command == "create")
 				testFileCreation();
@@ -77,13 +79,15 @@ int main() {
 				exit(0);
 			else if (command == "help")
 				openHelpMenu();
-			else 
-				cout << "Unrecognized command. Type 'help' for a list of commands and their usages.";
+			else
+				cout << " Unrecognized command. Type 'help' for a list of commands and their usages." << endl;
 
 		}
+		else {
+			cout << "  >> ";
+		}
 
-
-	} while (menuOpen);
+	} while (true);
 
 	return 0;
 }
@@ -98,12 +102,13 @@ void testFileCreation() {
 	char* fileName = (char*)malloc(sizeof(char) * 255);
 
 	cout << "Please enter the desire name of the file. It will be created in the same directory as this process." << endl;
-	cout << ">>";
+	cout << "  >> ";
 	cin >> fileName;
 
-	if (fileName != NULL)
+	if (fileName != NULL) {
 		filePointer = createFile(fileName);
-	else
+		cout << "File creation complete." << endl;
+	} else
 		cout << "Failed. Please enter a valid file name." << endl;
 
 }
@@ -111,7 +116,16 @@ void testFileCreation() {
 //2. Delete a file:
 void testFileDeletion() {
 
+	FILE* filePointer;
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+
+	cout << "Please enter the filename of the file you wish to delete." << endl;
+	cout << "Note: if the file is not in the same directory as this process, you must specify the full document path." << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	deleteFile(fileName);
 
 }
 
@@ -155,7 +169,6 @@ void testFileEdit() {
 //Help Menu Interface:
 void openHelpMenu() {
 
-	cout << endl;
 	cout << " Commands:" << endl;
 	cout << "\t 1. create" << "\t - Create a new file" << endl;
 	cout << "\t 2. delete" << "\t - Delete a specific file" << endl;
@@ -172,6 +185,7 @@ void openHelpMenu() {
 
 //Utility Methods:
 
+//1. Create a File:
 FILE* createFile(char* fileName) {
 
 	if (fileName != NULL)
@@ -179,3 +193,45 @@ FILE* createFile(char* fileName) {
 	else
 		return fopen("default.txt", "w");
 }
+
+//2. Delete a File:
+void deleteFile(char* fileName) {
+
+	FILE* tempFilePointer;
+	 
+	//Ensure the fileName is valid, not empty:
+	if (fileName != NULL) {
+
+		//Check to ensure the file exists before trying to delete:
+		tempFilePointer = fopen(fileName, "r");
+		if (tempFilePointer != NULL) {
+			fclose(tempFilePointer);
+			remove(fileName);
+			cout << "File " << fileName << " was successfully removed." << endl;
+
+		}
+		else {
+			fclose(tempFilePointer);
+			cout << "Error opening the file. Check to make sure you spelled the file name correctly." << endl;
+		}
+
+	}
+	else
+		cout << "You must enter a valid file name to delete." << endl;
+
+	return;
+
+}
+
+//3. Rename a File:
+//TODO
+
+//4. Copy a File:
+//TODO
+
+//5: Move a File:
+//TODO
+
+//6: Edit a File:
+//TODO
+
