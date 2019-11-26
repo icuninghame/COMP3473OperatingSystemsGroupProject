@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <errno.h>
 #include <iostream>
 #include <string>
 //Allows usage of fopen() in MS Visual Studio:
@@ -44,11 +45,10 @@ void openHelpMenu();
 
 FILE* createFile(char* fileName);
 void deleteFile(char* fileName);
+void renameFile(char* fileName, char* newName);
 
-//Main Function:
+//Main Function to test POFM operations:
 int main() {
-
-	//Main function to test POFM operations
 
 	//Menu System:
 	string command;
@@ -108,6 +108,7 @@ void testFileCreation() {
 	if (fileName != NULL) {
 		filePointer = createFile(fileName);
 		cout << "File creation complete." << endl;
+		fclose(filePointer);
 	} else
 		cout << "Failed. Please enter a valid file name." << endl;
 
@@ -115,8 +116,6 @@ void testFileCreation() {
 
 //2. Delete a file:
 void testFileDeletion() {
-
-	FILE* filePointer;
 
 	char* fileName = (char*)malloc(sizeof(char) * 255);
 
@@ -132,6 +131,19 @@ void testFileDeletion() {
 //3. Rename a file:
 void testFileRenaming() {
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+	char* newName = (char*)malloc(sizeof(char) * 255);
+
+	cout << " Please enter the current file name of the file you wish to rename." << endl;
+	cout << " Note: if the file is not in the same directory as this process, you must specify the full document path." << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	cout << " Please enter the desired new file name for " << fileName << ". " << endl;
+	cout << "  >> " << endl;
+	cin >> newName;
+
+	renameFile(fileName, newName);
 
 }
 
@@ -224,7 +236,20 @@ void deleteFile(char* fileName) {
 }
 
 //3. Rename a File:
-//TODO
+void renameFile(char fileName[], char newName[]) {
+
+	if (newName != NULL && fileName != NULL) {
+		if (rename(fileName, newName) == 0)
+			cout << " File name successfully changed from " << fileName << " to " << newName << ". " << endl;
+		else
+			cout << "Error: " << strerror(errno) << endl;
+			//cout << " File renaming was unsuccessful. This is probably because you do not have the correct permissions or the filename was misspelled." << endl;
+	}
+	else {
+		cout << " Failed. You must enter valid file names." << endl;
+	}
+
+}
 
 //4. Copy a File:
 //TODO
