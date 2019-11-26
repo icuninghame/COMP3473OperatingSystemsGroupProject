@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <String>
 
 /*
 	COMP-3473 Operating Systems Group Project
@@ -27,14 +28,16 @@
 
 using namespace std;
 
-//1. Create a file method:
-FILE* createFile(char* fileName) {
+//Function prototypes to be defined later:
+void testFileCreation();
+void testFileDeletion();
+void testFileRenaming();
+void testFileCopy();
+void testFileMove();
+void testFileEdit();
+void openHelpMenu();
 
-	if (fileName != NULL)
-		return fopen(fileName, "w");
-	else
-		return fopen("default.txt", "w");
-}
+FILE* createFile(char* fileName);
 
 //Main Function:
 int main() {
@@ -44,10 +47,34 @@ int main() {
 	//Menu System:
 
 	bool menuOpen = true;
+	string command = "";
 
 	do {
 
-		//Menu system for command-line command interpretation
+		cout << ">>";
+		cin >> command;
+
+		if (command != "") {
+
+			if (command == "create")
+				testFileCreation();
+			if (command == "delete")
+				testFileDeletion();
+			if (command == "rename")
+				testFileRenaming();
+			if (command == "copy")
+				testFileCopy();
+			if (command == "move")
+				testFileMove();
+			if (command == "edit")
+				testFileEdit();
+			if (command == "help")
+				openHelpMenu();
+
+			cout << "Unrecognized command. Type help for a list of commands and usages.";
+
+
+		}
 
 
 	} while (menuOpen);
@@ -79,3 +106,13 @@ int main() {
 	return 0;
 }
 
+//Utility Methods:
+
+//1. Create a file method:
+FILE* createFile(char* fileName) {
+
+	if (fileName != NULL)
+		return fopen(fileName, "w");
+	else
+		return fopen("default.txt", "w");
+}
