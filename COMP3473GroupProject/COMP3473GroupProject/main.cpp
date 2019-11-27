@@ -478,13 +478,11 @@ void appendFile(char* fileName, char dataToAppend[BUFFER_SIZE]) {
 
 	if (fileName != NULL) {
 
-		filePointer = fopen(fileName, "a");
-
-		if (filePointer == NULL) {
+		if (!(filePointer = fopen(fileName, "r"))) {
 			cout << "Error opening the file. Ensure the filename and path is spelled correctly, and you have write priveledges." << endl;
 			return;
 		}
-
+		filePointer = fopen(fileName, "a");
 		fputs(dataToAppend, filePointer);
 
 		cout << "Appended text added successfully." << endl;
