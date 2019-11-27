@@ -23,6 +23,6 @@ pofm must provide the following functionality:
  
   1. In-class demo (40%) no later than November 27., in the last week of classes. The GA will come to your groups, one by one, you will show your pofm running, and the GA will ask you to show specific features and also will ask you questions about your system and about your code.
   2. Final report (60%): no later than December 2. This report consists of 3 components:
-    - A design guide (30%): start by a short introduction, followed by explanation of your design and implementation. Give reasons for your design and implementation choices.
-    - A user manual including examples and screenshots (20%).
-    - All your code, with in-line comments (10%). 
+     - A design guide (30%): start by a short introduction, followed by explanation of your design and implementation. Give reasons for your design and implementation choices.
+     - A user manual including examples and screenshots (20%).
+     - All your code, with in-line comments (10%). 
