@@ -46,6 +46,8 @@ void openHelpMenu();
 FILE* createFile(char* fileName);
 void deleteFile(char* fileName);
 void renameFile(char* fileName, char* newName);
+void copyFile(char* src, char* dest);
+//void moveFile(char* src, char* dest);
 
 //Main Function to test POFM operations:
 int main() {
@@ -150,6 +152,18 @@ void testFileRenaming() {
 //4. Copy a file:
 void testFileCopy() {
 
+	char* fileSrc = (char*)malloc(sizeof(char) * 255);
+	char* fileDest = (char*)malloc(sizeof(char) * 255);
+
+	cout << " Please enter the document path of the file you wish to copy: " << endl;
+	cout << "  >> ";
+	cin >> fileSrc;
+	
+	cout << " Please enter the destination path including the filename that you want to create: " << endl;
+	cout << "  >> ";
+	cin >> fileDest;
+
+	copyFile(fileSrc, fileDest);
 
 }
 
@@ -236,7 +250,7 @@ void deleteFile(char* fileName) {
 }
 
 //3. Rename a File:
-void renameFile(char fileName[], char newName[]) {
+void renameFile(char* fileName, char* newName) {
 
 	if (newName != NULL && fileName != NULL) {
 		if (rename(fileName, newName) == 0)
@@ -252,7 +266,41 @@ void renameFile(char fileName[], char newName[]) {
 }
 
 //4. Copy a File:
-//TODO
+void copyFile(char* src, char* dest) {
+
+	FILE *srcPointer, *destPointer;
+	char ch;
+	int pos;
+
+	srcPointer = fopen(src, "r");
+
+	//Ensure the source file exists and is available to copy:
+	if (srcPointer == NULL) {
+		cout << "Error opening " << src << ". Check to make sure the name is spelled correctly." << endl;
+		return;
+	}
+	else
+		cout << "File " << src << " opened for copying." << endl;
+
+	destPointer = fopen(dest, "w");
+
+	fseek(srcPointer, 0L, SEEK_END);
+	pos = ftell(srcPointer);
+	fseek(srcPointer, 0L, SEEK_SET);
+
+	while (pos--) {
+		ch = fgetc(srcPointer);
+		fputc(ch, destPointer);
+	}
+
+	cout << "Finished copying " << src << " to " << dest << ". " << endl;
+
+	//Close all open file streams
+	fcloseall();
+
+	return;
+
+}
 
 //5: Move a File:
 //TODO
