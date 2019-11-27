@@ -7,6 +7,8 @@
 #pragma warning(disable:4996)
 #endif
 
+#define MAX_FILE_CHAR 1024
+
 
 /*
 	COMP-3473 Operating Systems Group Project
@@ -42,6 +44,7 @@ void testFileCopy();
 void testFileMove();
 void testFileEdit();
 void openHelpMenu();
+void openEditHelpMenu();
 
 FILE* createFile(char* fileName);
 void deleteFile(char* fileName);
@@ -189,6 +192,7 @@ void testFileMove() {
 void testFileEdit() {
 
 	char fileName[255];
+	string command;
 
 	cout << " Please enter the file name of the file you wish to edit." << endl;
 	cout << " Note: if it does not exist in this directory, you must specify the full document path." << endl;
@@ -197,10 +201,57 @@ void testFileEdit() {
 
 	//if success (fileName is valid):
 	cout << " Please enter the type of edit you wish to make: " << endl;
-	cout << "\t 1. Read" << endl;
-	cout << "\t 2. Append" << endl;
-	cout << "\t 3. Insert" << endl;
-	cout << "\t 4. Remove" << endl;
+	cout << "\t 1. read" << endl;
+	cout << "\t 2. append" << endl;
+	cout << "\t 3. insert" << endl;
+	cout << "\t 4. empty" << endl;
+
+	cout << "  >> ";
+	cin >> command;
+	cout << endl;
+
+	if (!command.empty()) {
+
+		if (command == "read")
+			testFileRead();
+		else if (command == "append")
+			testFileAppend();
+		else if (command == "insert")
+			testFileInsert();
+		else if (command == "empty")
+			testFileEmpty();
+		else if (command == "help")
+			openEditHelpMenu();
+		else
+			cout << " Unrecognized command. Type 'help' for a list of commands and their usages." << endl;
+
+	}
+	else {
+		cout << "  >> ";
+	}
+
+}
+
+//6.i: Test Read a File
+void testFileRead() {
+
+
+}
+
+//6.ii: Test Append Text to a File
+void testFileAppend() {
+
+}
+
+//6.iii: Test Insert Text in a File:
+void testFileInsert() {
+
+
+}
+
+//6.iv: Test Emptying a File:
+void testFileEmpty() {
+
 
 }
 
@@ -215,6 +266,20 @@ void openHelpMenu() {
 	cout << "\t 5. move" << "\t - Move a file from one directory to another" << endl;
 	cout << "\t 6. edit" << "\t - Edit a text file (Read, Append, Insert, Remove)" << endl;
 	cout << "\t 7. exit" << "\t - Exit this program" << endl;
+	cout << " Usage:\n\t enter a command word verbatim as above (no parameters), then enter the required info when prompted." << endl << endl;
+
+	return;
+
+}
+
+//Edit File Help Menu Interface:
+void openEditHelpMenu() {
+
+	cout << " Commands:" << endl;
+	cout << "\t 1. read" << "\t - Read text from a specified file" << endl;
+	cout << "\t 2. append" << "\t - Append text to the end of a specified file" << endl;
+	cout << "\t 3. insert" << "\t - Insert text at certain char position of a specified file" << endl;
+	cout << "\t 4. empty" << "\t - Empty the specified file of all its contents" << endl;
 	cout << " Usage:\n\t enter a command word verbatim as above (no parameters), then enter the required info when prompted." << endl << endl;
 
 	return;
@@ -331,5 +396,32 @@ void moveFile(char* fileSrc, char* fileDest) {
 }
 
 //6: Edit a File:
-//TODO
+
+//i.   Read a File:
+void readFile(char* fileName) {
+
+	FILE* filePointer;
+	char fileString[MAX_FILE_CHAR];
+
+	filePointer = fopen(fileName, "r");
+	if (filePointer == NULL) {
+		fclose(filePointer);
+		cout << "Error reading " << fileName << ". " << endl;
+		return;
+	}
+
+	for (int i = 0; fgets(fileString, MAX_FILE_CHAR, filePointer) != NULL; i++) {
+		cout << "Line " << i <<": " << fileString << endl;
+	}
+
+	fclose(filePointer);
+	return;
+
+}
+
+//ii.  Append text to a file:
+
+//iii. Insert text at specific char position:
+
+//iv.  Remove data from a file:
 
