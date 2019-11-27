@@ -47,7 +47,7 @@ FILE* createFile(char* fileName);
 void deleteFile(char* fileName);
 void renameFile(char* fileName, char* newName);
 void copyFile(char* src, char* dest);
-//void moveFile(char* src, char* dest);
+void moveFile(char* src, char* dest);
 
 //Main Function to test POFM operations:
 int main() {
@@ -96,7 +96,7 @@ int main() {
 
 //Test Run Methods:
 
-//1. Create a file:
+//1. Test Create a file:
 void testFileCreation() {
 
 	FILE* filePointer;
@@ -116,7 +116,7 @@ void testFileCreation() {
 
 }
 
-//2. Delete a file:
+//2. Test Delete a file:
 void testFileDeletion() {
 
 	char* fileName = (char*)malloc(sizeof(char) * 255);
@@ -130,7 +130,7 @@ void testFileDeletion() {
 
 }
 
-//3. Rename a file:
+//3. Test Rename a file:
 void testFileRenaming() {
 
 	char* fileName = (char*)malloc(sizeof(char) * 255);
@@ -149,7 +149,7 @@ void testFileRenaming() {
 
 }
 
-//4. Copy a file:
+//4. Test Copy a file:
 void testFileCopy() {
 
 	char* fileSrc = (char*)malloc(sizeof(char) * 255);
@@ -167,24 +167,36 @@ void testFileCopy() {
 
 }
 
-//5. Move a file:
+//5. Test Move a file:
 void testFileMove() {
 
+	char* fileSrc = (char*)malloc(sizeof(char) * 255);
+	char* fileDest = (char*)malloc(sizeof(char) * 255);
+
+	cout << " Please enter the document path of the file you wish to move." << endl;
+	cout << "  >> ";
+	cin >> fileSrc;
+
+	cout << " Please enter the desired new location path for " << fileSrc << ". " << endl;
+	cout << "  >> " << endl;
+	cin >> fileDest;
+
+	moveFile(fileSrc, fileDest);
 
 }
 
-//6: Edit a file:
+//6: Test Edit a file:
 void testFileEdit() {
 
 	char fileName[255];
 
-	cout << "Please enter the file name of the file you wish to edit." << endl;
-	cout << "Note: if it does not exist in this directory, you must specify the full document path." << endl;
-	cout << ">>";
+	cout << " Please enter the file name of the file you wish to edit." << endl;
+	cout << " Note: if it does not exist in this directory, you must specify the full document path." << endl;
+	cout << "  >> ";
 	cin >> fileName;
 
 	//if success (fileName is valid):
-	cout << "Please enter the type of edit you wish to make: " << endl;
+	cout << " Please enter the type of edit you wish to make: " << endl;
 	cout << "\t 1. Read" << endl;
 	cout << "\t 2. Append" << endl;
 	cout << "\t 3. Insert" << endl;
@@ -303,7 +315,20 @@ void copyFile(char* src, char* dest) {
 }
 
 //5: Move a File:
-//TODO
+void moveFile(char* fileSrc, char* fileDest) {
+
+	if (fileSrc != NULL && fileDest != NULL) {
+		if (rename(fileSrc, fileDest) == 0)
+			cout << " File successfully moved from " << fileSrc << " to " << fileDest << ". " << endl;
+		else
+			cout << "Error: " << strerror(errno) << endl;
+		//cout << " File renaming was unsuccessful. This is probably because you do not have the correct permissions or the filename was misspelled." << endl;
+	}
+	else {
+		cout << " Failed. You must enter valid file names." << endl;
+	}
+
+}
 
 //6: Edit a File:
 //TODO
