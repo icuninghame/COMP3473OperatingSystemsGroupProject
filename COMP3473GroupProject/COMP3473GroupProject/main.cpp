@@ -115,7 +115,7 @@ void testFileCreation() {
 
 	char* fileName = (char*)malloc(sizeof(char) * 255);
 
-	cout << "Please enter the desire name of the file. It will be created in the same directory as this process." << endl;
+	cout << "Please enter the desired name of the file. It will be created in the same directory as this process." << endl;
 	cout << "  >> ";
 	cin >> fileName;
 
@@ -261,6 +261,7 @@ void testFileAppend() {
 
 	//Remove any extra whitespace characters that could be in stdin:
 	fflush(stdin);
+	fgetc(stdin);
 	fgets(dataToAppend, BUFFER_SIZE, stdin);
 	appendFile(fileName, dataToAppend);
 
@@ -363,8 +364,7 @@ void deleteFile(char* fileName) {
 
 		}
 		else {
-			fclose(tempFilePointer);
-			cout << "Error opening the file. Check to make sure you spelled the file name correctly." << endl;
+			cout << "Error deleting the file. Check to make sure you spelled the file name correctly." << endl;
 		}
 
 	}
@@ -409,21 +409,25 @@ void copyFile(char* src, char* dest) {
 		cout << "File " << src << " opened for copying." << endl;
 
 	destPointer = fopen(dest, "w");
-
-	fseek(srcPointer, 0L, SEEK_END);
-	pos = ftell(srcPointer);
-	fseek(srcPointer, 0L, SEEK_SET);
-
-	while (pos--) {
-		ch = fgetc(srcPointer);
-		fputc(ch, destPointer);
+	if (destPointer == NULL) {
+		cout << "Error opening " << dest << ". Check to make sure the name is spelled correctly." << endl;
+		return;
 	}
+	else {
+		fseek(srcPointer, 0L, SEEK_END);
+		pos = ftell(srcPointer);
+		fseek(srcPointer, 0L, SEEK_SET);
 
-	cout << "Finished copying " << src << " to " << dest << ". " << endl;
+		while (pos--) {
+			ch = fgetc(srcPointer);
+			fputc(ch, destPointer);
+		}
 
-	//Close all open file streams
-	fcloseall();
+		cout << "Finished copying " << src << " to " << dest << ". " << endl;
 
+		//Close all open file streams
+		fcloseall();
+	}
 	return;
 
 }
@@ -454,8 +458,7 @@ void readFile(char* fileName) {
 
 	filePointer = fopen(fileName, "r");
 	if (filePointer == NULL) {
-		fclose(filePointer);
-		cout << "Error reading " << fileName << ". " << endl;
+		cout << "Error reading " << fileName << ". Please try again." << endl;
 		return;
 	}
 
@@ -556,7 +559,6 @@ void emptyFile(char* fileName) {
 	filePointer = fopen(fileName, "r");
 	if (filePointer == NULL) {
 		cout << "File does not exist, so it cannot be emptied. " << endl;
-		fclose(filePointer);
 		return;
 	}
 
@@ -570,4 +572,3 @@ void emptyFile(char* fileName) {
 
 
 }
-//Testing to see if it updates to Github
