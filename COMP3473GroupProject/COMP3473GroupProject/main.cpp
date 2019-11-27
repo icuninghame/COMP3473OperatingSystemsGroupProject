@@ -7,7 +7,8 @@
 #pragma warning(disable:4996)
 #endif
 
-#define MAX_FILE_CHAR 1024
+#define MAX_FILE_CHAR 2048
+#define BUFFER_SIZE 128
 
 
 /*
@@ -43,6 +44,10 @@ void testFileRenaming();
 void testFileCopy();
 void testFileMove();
 void testFileEdit();
+void testFileRead();
+void testFileAppend();
+void testFileInsert();
+void testFileEmpty();
 void openHelpMenu();
 void openEditHelpMenu();
 
@@ -51,6 +56,10 @@ void deleteFile(char* fileName);
 void renameFile(char* fileName, char* newName);
 void copyFile(char* src, char* dest);
 void moveFile(char* src, char* dest);
+void readFile(char* fileName);
+void appendFile(char* fileName, char dataToAppend[BUFFER_SIZE]);
+void insertFile(char* fileName, char dataToInsert[BUFFER_SIZE], int pos);
+void emptyFile(char* fileName);
 
 //Main Function to test POFM operations:
 int main() {
@@ -191,16 +200,10 @@ void testFileMove() {
 //6: Test Edit a file:
 void testFileEdit() {
 
-	char fileName[255];
 	string command;
 
-	cout << " Please enter the file name of the file you wish to edit." << endl;
-	cout << " Note: if it does not exist in this directory, you must specify the full document path." << endl;
-	cout << "  >> ";
-	cin >> fileName;
-
 	//if success (fileName is valid):
-	cout << " Please enter the type of edit you wish to make: " << endl;
+	cout << " Please enter the type of edit you wish to make, or type 'help' for more info: " << endl;
 	cout << "\t 1. read" << endl;
 	cout << "\t 2. append" << endl;
 	cout << "\t 3. insert" << endl;
@@ -226,32 +229,78 @@ void testFileEdit() {
 			cout << " Unrecognized command. Type 'help' for a list of commands and their usages." << endl;
 
 	}
-	else {
-		cout << "  >> ";
-	}
 
 }
 
 //6.i: Test Read a File
 void testFileRead() {
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+
+	cout << " Please enter the name of the file you wish to be read: " << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	readFile(fileName);
 
 }
 
 //6.ii: Test Append Text to a File
 void testFileAppend() {
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+	char dataToAppend[BUFFER_SIZE];
+
+	cout << " Please enter the name of the file you wish to append text to: " << endl;
+	cout << " Note: this must be a valid .txt file." << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	cout << " Please enter the string of text you wish to append to this file: " << endl;
+	cout << "  >> ";
+
+	//Remove any extra whitespace characters that could be in stdin:
+	fflush(stdin);
+	fgets(dataToAppend, BUFFER_SIZE, stdin);
+	appendFile(fileName, dataToAppend);
+
 }
 
 //6.iii: Test Insert Text in a File:
 void testFileInsert() {
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+	int pos;
+	char dataToInsert[BUFFER_SIZE];
+
+	cout << " Please enter the name of the file you wish to insert text into: " << endl;
+	cout << " Note: this must be a valid .txt file." << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	cout << " Please enter the line # that you wish to replace in this file." << endl;
+	cout << "  >> ";
+	cin >> pos;
+
+	cout << " Please enter the string that you would like to insert into this file: " << endl;
+	cout << "  >> ";
+	cin >> dataToInsert;
+
+	insertFile(fileName, dataToInsert, pos);
 
 }
 
 //6.iv: Test Emptying a File:
 void testFileEmpty() {
 
+	char* fileName = (char*)malloc(sizeof(char) * 255);
+
+	cout << " Please enter the name of the file you wish to empty the text of: " << endl;
+	cout << " Note: this must be a valid .txt file." << endl;
+	cout << "  >> ";
+	cin >> fileName;
+
+	emptyFile(fileName);
 
 }
 
@@ -420,8 +469,104 @@ void readFile(char* fileName) {
 }
 
 //ii.  Append text to a file:
+void appendFile(char* fileName, char dataToAppend[BUFFER_SIZE]) {
+
+	FILE* filePointer;
+
+	if (fileName != NULL) {
+
+		filePointer = fopen(fileName, "a");
+
+		if (filePointer == NULL) {
+			cout << "Error opening the file. Ensure the filename and path is spelled correctly, and you have write priveledges." << endl;
+			return;
+		}
+
+		fputs(dataToAppend, filePointer);
+
+		cout << "Appended text added successfully." << endl;
+
+		fclose(filePointer);
+
+	}
+		
+
+}
+
 
 //iii. Insert text at specific char position:
+void insertFile(char* fileName, char newLine[BUFFER_SIZE], int pos) {
+
+	FILE* filePointer;
+	FILE* tempFilePointer;
+	int lineNum = 0, lineCount = 0;
+	char fileString[MAX_FILE_CHAR], temp[] = "temp.txt";
+
+	cout << "Opening file " << fileName << "..." << endl;
+
+	filePointer = fopen(fileName, "r");
+	if (filePointer == NULL) {
+		cout << "Unable to open the file. Please ensure you spelled the file name correctly." << endl;
+		return;
+	}
+	
+	tempFilePointer = fopen(temp, "w");
+	if (tempFilePointer == NULL) {
+		cout << "Error openining the temporary file for writing. Ensure you have the correct permissions. " << endl;
+		fclose(filePointer);
+		return;
+	}
+
+	//Copy all the contents from the original file to the temporary one, except for the line to be replaced.
+	while (!feof(filePointer))
+	{
+		strcpy(fileString, "\0");
+		fgets(fileString, MAX_FILE_CHAR, filePointer);
+		if (!feof(filePointer))
+		{
+			lineCount++;
+			if (lineCount != lineNum)
+			{
+				fprintf(tempFilePointer, "%s", fileString);
+			}
+			else
+			{
+				fprintf(tempFilePointer, "%s", newLine);
+			}
+		}
+	}
+	//Close the file streams
+	fclose(filePointer);
+	fclose(tempFilePointer);
+	//Remove the original (unedited) file
+	remove(fileName);
+	//Rename the temporary file to be the same as the one its replacing
+	rename(temp, fileName);
+	cout << " Line insertion finished successfully!" << endl;
+
+
+}
 
 //iv.  Remove data from a file:
+void emptyFile(char* fileName) {
 
+	FILE* filePointer;
+
+	//Ensure the file exists before emptying:
+	filePointer = fopen(fileName, "r");
+	if (filePointer == NULL) {
+		cout << "File does not exist, so it cannot be emptied. " << endl;
+		fclose(filePointer);
+		return;
+	}
+
+	//Overwrite the file:
+	filePointer = freopen(fileName, "w", filePointer);
+	fclose(filePointer);
+
+	cout << " File " << fileName << " emptied of all its contents successfully." << endl;
+
+	return;
+
+
+}
